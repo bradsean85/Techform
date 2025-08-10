@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Component Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a2e;
+            color: white;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #00e5ff;
+            border-radius: 5px;
+        }
+        .success { color: #00ff00; }
+        .error { color: #ff0000; }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            background: #00e5ff;
+            color: #1a1a2e;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Frontend Component Test</h1>
+    
+    <div class="test-section">
+        <h2>Component Loading Test</h2>
+        <div id="component-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>API Client Test</h2>
+        <button onclick="testApiClient()">Test API Client</button>
+        <div id="api-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Notification Manager Test</h2>
+        <button onclick="testNotifications()">Test Notifications</button>
+        <button onclick="testNotificationTypes()">Test All Types</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Product Manager Test</h2>
+        <button onclick="testProductManager()">Test Product Loading</button>
+        <div id="product-status"></div>
+    </div>
+
+    <!-- Include all the component scripts -->
+    <script src="js/ApiClient.js"></script>
+    <script src="js/NotificationManager.js"></script>
+    <script src="js/CartManager.js"></script>
+    <script src="js/ProductManager.js"></script>
+    <script src="js/UserManager.js"></script>
+
+    <script>
+        // Test component loading
+        function checkComponents() {
+            const status = document.getElementById('component-status');
+            const components = [
+                { name: 'ApiClient', class: ApiClient },
+                { name: 'NotificationManager', class: NotificationManager },
+                { name: 'CartManager', class: CartManager },
+                { name: 'ProductManager', class: ProductManager },
+                { name: 'UserManager', class: UserManager }
+            ];
+            
+            let html = '';
+            components.forEach(comp => {
+                const loaded = typeof comp.class !== 'undefined';
+                html += `<div class="${loaded ? 'success' : 'error'}">
+                    ${comp.name}: ${loaded ? '✓ Loaded' : '✗ Failed'}
+                </div>`;
+            });
+            
+            status.innerHTML = html;
+        }
+
+        // Test API client
+        async function testApiClient() {
+            const status = document.getElementById('api-status');
+            try {
+                const apiClient = new ApiClient();
+                status.innerHTML = '<div class="success">✓ ApiClient instantiated successfully</div>';
+                
+                // Test a simple request (this will likely fail due to CORS, but that's expected)
+                try {
+                    await apiClient.get('/health');
+                    status.innerHTML += '<div class="success">✓ API request successful</div>';
+                } catch (error) {
+                    status.innerHTML += `<div class="error">⚠ API request failed (expected): ${error.message}</div>`;
+                }
+            } catch (error) {
+                status.innerHTML = `<div class="error">✗ ApiClient failed: ${error.message}</div>`;
+            }
+        }
+
+        // Test notifications
+        function testNotifications() {
+            try {
+                const notificationManager = new NotificationManager();
+                notificationManager.success('Test notification working!');
+            } catch (error) {
+                console.error('Notification test failed:', error);
+            }
+        }
+
+        function testNotificationTypes() {
+            try {
+                const notificationManager = new NotificationManager();
+                notificationManager.success('Success notification');
+                setTimeout(() => notificationManager.error('Error notification'), 500);
+                setTimeout(() => notificationManager.warning('Warning notification'), 1000);
+                setTimeout(() => notificationManager.info('Info notification'), 1500);
+            } catch (error) {
+                console.error('Notification types test failed:', error);
+            }
+        }
+
+        // Test product manager
+        function testProductManager() {
+            const status = document.getElementById('product-status');
+            try {
+                // Create a mock product grid element
+                const mockGrid = document.createElement('div');
+                mockGrid.id = 'productGrid';
+                document.body.appendChild(mockGrid);
+                
+                const apiClient = new ApiClient();
+                const productManager = new ProductManager(apiClient);
+                
+                status.innerHTML = '<div class="success">✓ ProductManager instantiated successfully</div>';
+                
+                // Test product loading (will use fallback data)
+                setTimeout(() => {
+                    const products = productManager.products;
+                    if (products && products.length > 0) {
+                        status.innerHTML += `<div class="success">✓ Products loaded: ${products.length} items</div>`;
+                    } else {
+                        status.innerHTML += '<div class="error">✗ No products loaded</div>';
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                status.innerHTML = `<div class="error">✗ ProductManager failed: ${error.message}</div>`;
+            }
+        }
+
+        // Run component check on load
+        window.addEventListener('DOMContentLoaded', checkComponents);
+    </script>
+</body>
+</html>

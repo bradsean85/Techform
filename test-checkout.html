@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Checkout Test</h1>
+        <button id="testCheckout" class="btn btn-primary">Test Checkout</button>
+        <button id="testOrderHistory" class="btn btn-secondary">Test Order History</button>
+        <div id="status"></div>
+    </div>
+
+    <script src="js/ApiClient.js"></script>
+    <script src="js/NotificationManager.js"></script>
+    <script src="js/CartManager.js"></script>
+    <script src="js/UserManager.js"></script>
+    <script src="js/CheckoutManager.js"></script>
+
+    <script>
+        // Initialize managers
+        const apiClient = new ApiClient();
+        const notificationManager = new NotificationManager();
+        const cartManager = new CartManager();
+        const userManager = new UserManager(apiClient);
+        const checkoutManager = new CheckoutManager(apiClient, cartManager, userManager, notificationManager);
+
+        // Mock user authentication
+        const mockUser = {
+            id: 1,
+            firstName: 'Test',
+            lastName: 'User',
+            email: 'test@example.com'
+        };
+
+        // Mock cart items
+        const mockCartItems = [
+            {
+                id: 1,
+                name: 'Neural Interface',
+                price: 299.99,
+                quantity: 1,
+                icon: 'fas fa-microchip'
+            },
+            {
+                id: 2,
+                name: 'Cyber Goggles',
+                price: 199.99,
+                quantity: 2,
+                icon: 'fas fa-glasses'
+            }
+        ];
+
+        // Mock methods
+        userManager.getCurrentUser = () => mockUser;
+        userManager.isUserAuthenticated = () => true;
+        cartManager.getItems = () => mockCartItems;
+        cartManager.getSubtotal = () => mockCartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        cartManager.clearCart = () => console.log('Cart cleared');
+
+        // Test checkout
+        document.getElementById('testCheckout').addEventListener('click', async () => {
+            const status = document.getElementById('status');
+            status.innerHTML = 'Testing checkout...';
+            
+            try {
+                const result = await checkoutManager.initializeCheckout();
+                status.innerHTML = `Checkout initialized: ${result}`;
+            } catch (error) {
+                status.innerHTML = `Error: ${error.message}`;
+            }
+        });
+
+        // Test order history
+        document.getElementById('testOrderHistory').addEventListener('click', async () => {
+            const status = document.getElementById('status');
+            status.innerHTML = 'Testing order history...';
+            
+            try {
+                await checkoutManager.viewOrderHistory();
+                status.innerHTML = 'Order history opened';
+            } catch (error) {
+                status.innerHTML = `Error: ${error.message}`;
+            }
+        });
+
+        // Make managers globally available
+        window.checkoutManager = checkoutManager;
+        window.userManager = userManager;
+        window.cartManager = cartManager;
+        window.notificationManager = notificationManager;
+    </script>
+</body>
+</html>

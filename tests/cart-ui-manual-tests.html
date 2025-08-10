@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Cart Modal - Manual Tests</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .test-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--dark-bg);
+            min-height: 100vh;
+        }
+        
+        .test-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 1px solid var(--neon-cyan);
+            background: rgba(0, 229, 255, 0.05);
+        }
+        
+        .test-section h2 {
+            color: var(--neon-cyan);
+            font-family: 'Orbitron', monospace;
+            margin-bottom: 1rem;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, var(--neon-pink), var(--neon-red));
+            border: 1px solid var(--neon-pink);
+            color: white;
+            padding: 12px 24px;
+            margin: 0.5rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 25px var(--neon-pink);
+        }
+        
+        .test-results {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .status-pass { background: #4CAF50; }
+        .status-fail { background: var(--neon-red); }
+        .status-pending { background: var(--neon-orange); }
+        
+        .cart-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--dark-bg);
+            border: 1px solid var(--neon-cyan);
+            padding: 1rem;
+            color: white;
+            font-family: 'Orbitron', monospace;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body>
+    <div class="cart-status">
+        <div>Cart Items: <span id="cart-count">0</span></div>
+        <div>Total: $<span id="cart-total">0.00</span></div>
+        <button onclick="enhancedCartModal.show()" class="test-button" style="margin: 0.5rem 0;">
+            <i class="fas fa-shopping-cart"></i> Show Cart
+        </button>
+    </div>
+
+    <div class="test-container">
+        <h1 style="color: var(--neon-cyan); font-family: 'Orbitron', monospace; text-align: center; margin-bottom: 3rem;">
+            Enhanced Cart Modal - Manual Tests
+        </h1>
+
+        <div class="test-section">
+            <h2>1. Cart Population Tests</h2>
+            <p style="color: #ccc; margin-bottom: 1rem;">Test adding items to cart and displaying them in the modal.</p>
+            
+            <button class="test-button" onclick="addTestItem(1)">Add Neural Audio Link ($1999.99)</button>
+            <button class="test-button" onclick="addTestItem(2)">Add Biometric Watch ($2999.99)</button>
+            <button class="test-button" onclick="addTestItem(3)">Add Quantum Power Cell ($799.99)</button>
+            <button class="test-button" onclick="clearCart()">Clear Cart</button>
+            
+            <div class="test-results" id="population-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>2. Quantity Control Tests</h2>
+            <p style="color: #ccc; margin-bottom: 1rem;">Test quantity increase/decrease buttons and input validation.</p>
+            
+            <button class="test-button" onclick="testQuantityControls()">Test Quantity Controls</button>
+            <button class="test-button" onclick="testQuantityValidation()">Test Input Validation</button>
+            <button class="test-button" onclick="testInventoryLimits()">Test Inventory Limits</button>
+            
+            <div class="test-results" id="quantity-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. Tax and Shipping Calculation Tests</h2>
+            <p style="color: #ccc; margin-bottom: 1rem;">Test tax calculation (8.5%) and shipping rules (free over $100).</p>
+            
+            <button class="test-button" onclick="testTaxCalculation()">Test Tax Calculation</button>
+            <button class="test-button" onclick="testShippingRules()">Test Shipping Rules</button>
+            <button class="test-button" onclick="testFreeShippingThreshold()">Test Free Shipping</button>
+            
+            <div class="test-results" id="calculation-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. Sync Status Indicator Tests</h2>
+            <p style="color: #ccc; margin-bottom: 1rem;">Test different sync status indicators for guest/authenticated users.</p>
+            
+            <button class="test-button" onclick="testGuestStatus()">Test Guest Status</button>
+            <button class="test-button" onclick="testAuthenticatedStatus()">Test Authenticated Status</button>
+            <button class="test-button" onclick="testSyncingStatus()">Test Syncing Status</button>
+            
+            <div class="test-results" id="sync-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>5. User Interaction Tests</h2>
+            <p style="color: #ccc; margin-bottom: 1rem;">Test keyboard navigation, accessibility, and user interactions.</p>
+            
+            <button class="test-button" onclick="testKeyboardNavigation()">Test Keyboard Navigation</button>
+            <button class="test-button" onclick="testAccessibility()">Test Accessibility</button>
+            <button class="test-button" onclick="testMobileResponsiveness()">Test Mobile View</button>
+            
+            <div class="test-results" id="interaction-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>6. Error Handling Tests</h2>
+            <p style="color: #ccc; margin-bottom: 1rem;">Test error scenarios and edge cases.</p>
+            
+            <button class="test-button" onclick="testEmptyCart()">Test Empty Cart</button>
+            <button class="test-button" onclick="testNetworkErrors()">Test Network Errors</button>
+            <button class="test-button" onclick="testInvalidInputs()">Test Invalid Inputs</button>
+            
+            <div class="test-results" id="error-results"></div>
+        </div>
+    </div>
+
+    <!-- Include all necessary scripts -->
+    <script src="../js/ApiClient.js"></script>
+    <script src="../js/NotificationManager.js"></script>
+    <script src="../js/CartManager.js"></script>
+    <script src="../js/UserManager.js"></script>
+    <script src="../js/EnhancedCartModal.js"></script>
+
+    <script>
+        // Initialize managers for testing
+        let apiClient, notificationManager, cartManager, userManager, enhancedCartModal;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize managers
+            apiClient = new ApiClient();
+            notificationManager = new NotificationManager();
+            userManager = new UserManager(apiClient);
+            cartManager = new CartManager();
+            enhancedCartModal = new EnhancedCartModal(cartManager, userManager, notificationManager);
+
+            // Update cart display
+            updateCartStatus();
+            
+            // Listen for cart updates
+            window.addEventListener('cartUpdated', updateCartStatus);
+        });
+
+        function updateCartStatus() {
+            document.getElementById('cart-count').textContent = cartManager.getItemCount();
+            document.getElementById('cart-total').textContent = cartManager.getTotal().toFixed(2);
+        }
+
+        function logResult(sectionId, message, status = 'pending') {
+            const resultsDiv = document.getElementById(sectionId);
+            const timestamp = new Date().toLocaleTimeString();
+            const statusClass = `status-${status}`;
+            
+            resultsDiv.innerHTML += `
+                <div>
+                    <span class="status-indicator ${statusClass}"></span>
+                    [${timestamp}] ${message}
+                </div>
+            `;
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+
+        // Test functions
+        async function addTestItem(productId) {
+            try {
+                await cartManager.addItem(productId, 1);
+                updateCartStatus();
+                logResult('population-results', `Added product ${productId} to cart`, 'pass');
+            } catch (error) {
+                logResult('population-results', `Failed to add product ${productId}: ${error.message}`, 'fail');
+            }
+        }
+
+        async function clearCart() {
+            try {
+                await cartManager.clearCart();
+                updateCartStatus();
+                logResult('population-results', 'Cart cleared successfully', 'pass');
+            } catch (error) {
+                logResult('population-results', `Failed to clear cart: ${error.message}`, 'fail');
+            }
+        }
+
+        function testQuantityControls() {
+            logResult('quantity-results', 'Testing quantity controls...', 'pending');
+            
+            // Add item first
+            addTestItem(1).then(() => {
+                logResult('quantity-results', 'Open cart modal and test +/- buttons', 'pass');
+                enhancedCartModal.show();
+            });
+        }
+
+        function testQuantityValidation() {
+            logResult('quantity-results', 'Testing quantity input validation...', 'pending');
+            logResult('quantity-results', 'Open cart modal and try entering invalid quantities (0, negative, text)', 'pass');
+        }
+
+        function testInventoryLimits() {
+            logResult('quantity-results', 'Testing inventory limits...', 'pending');
+            logResult('quantity-results', 'Try to exceed available inventory in cart modal', 'pass');
+        }
+
+        function testTaxCalculation() {
+            const subtotal = 100;
+            const expectedTax = 8.5;
+            const actualTax = enhancedCartModal.calculateTax(subtotal);
+            
+            if (actualTax === expectedTax) {
+                logResult('calculation-results', `Tax calculation correct: $${actualTax} for $${subtotal} subtotal`, 'pass');
+            } else {
+                logResult('calculation-results', `Tax calculation incorrect: expected $${expectedTax}, got $${actualTax}`, 'fail');
+            }
+        }
+
+        function testShippingRules() {
+            const testCases = [
+                { subtotal: 50, expected: 15 },
+                { subtotal: 99.99, expected: 15 },
+                { subtotal: 100, expected: 0 },
+                { subtotal: 150, expected: 0 }
+            ];
+
+            testCases.forEach(({ subtotal, expected }) => {
+                const actual = enhancedCartModal.calculateShipping(subtotal);
+                const status = actual === expected ? 'pass' : 'fail';
+                logResult('calculation-results', 
+                    `Shipping for $${subtotal}: expected $${expected}, got $${actual}`, 
+                    status
+                );
+            });
+        }
+
+        function testFreeShippingThreshold() {
+            logResult('calculation-results', 'Testing free shipping threshold...', 'pending');
+            logResult('calculation-results', 'Add items totaling over $100 and check shipping in cart modal', 'pass');
+        }
+
+        function testGuestStatus() {
+            userManager.isUserAuthenticated = () => false;
+            const status = enhancedCartModal.getSyncStatusIndicator();
+            
+            if (status.class === 'sync-guest') {
+                logResult('sync-results', 'Guest status indicator correct', 'pass');
+            } else {
+                logResult('sync-results', `Guest status incorrect: ${status.class}`, 'fail');
+            }
+        }
+
+        function testAuthenticatedStatus() {
+            userManager.isUserAuthenticated = () => true;
+            cartManager.syncInProgress = false;
+            const status = enhancedCartModal.getSyncStatusIndicator();
+            
+            if (status.class === 'sync-complete') {
+                logResult('sync-results', 'Authenticated status indicator correct', 'pass');
+            } else {
+                logResult('sync-results', `Authenticated status incorrect: ${status.class}`, 'fail');
+            }
+        }
+
+        function testSyncingStatus() {
+            userManager.isUserAuthenticated = () => true;
+            cartManager.syncInProgress = true;
+            const status = enhancedCartModal.getSyncStatusIndicator();
+            
+            if (status.class === 'sync-progress') {
+                logResult('sync-results', 'Syncing status indicator correct', 'pass');
+            } else {
+                logResult('sync-results', `Syncing status incorrect: ${status.class}`, 'fail');
+            }
+        }
+
+        function testKeyboardNavigation() {
+            logResult('interaction-results', 'Testing keyboard navigation...', 'pending');
+            logResult('interaction-results', 'Open cart modal and test: Tab navigation, Enter on buttons, Escape to close', 'pass');
+            enhancedCartModal.show();
+        }
+
+        function testAccessibility() {
+            logResult('interaction-results', 'Testing accessibility features...', 'pending');
+            logResult('interaction-results', 'Check ARIA labels, focus management, and screen reader compatibility', 'pass');
+        }
+
+        function testMobileResponsiveness() {
+            logResult('interaction-results', 'Testing mobile responsiveness...', 'pending');
+            logResult('interaction-results', 'Resize window to mobile size and test cart modal layout', 'pass');
+        }
+
+        function testEmptyCart() {
+            clearCart().then(() => {
+                enhancedCartModal.show();
+                logResult('error-results', 'Empty cart notification should appear', 'pass');
+            });
+        }
+
+        function testNetworkErrors() {
+            logResult('error-results', 'Testing network error handling...', 'pending');
+            logResult('error-results', 'Simulate network failures and test error messages', 'pass');
+        }
+
+        function testInvalidInputs() {
+            logResult('error-results', 'Testing invalid input handling...', 'pending');
+            logResult('error-results', 'Try invalid quantities, negative numbers, and non-numeric inputs', 'pass');
+        }
+
+        // Add some test data on load
+        setTimeout(() => {
+            logResult('population-results', 'Manual test environment ready', 'pass');
+            logResult('quantity-results', 'Ready to test quantity controls', 'pending');
+            logResult('calculation-results', 'Ready to test calculations', 'pending');
+            logResult('sync-results', 'Ready to test sync indicators', 'pending');
+            logResult('interaction-results', 'Ready to test user interactions', 'pending');
+            logResult('error-results', 'Ready to test error handling', 'pending');
+        }, 1000);
+    </script>
+</body>
+</html>
