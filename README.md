@@ -38,49 +38,31 @@ Custom CSS: Cyberpunk-themed design system with responsive layouts
 Prerequisites
 Node.js (v16.0.0 or higher)
 npm (comes with Node.js)
+
 Setup
-1.
-Clone the repository
-Bash
+git clone https://github.com/yourusername/techform.git
+cd techform
 
-
-
-Run
-git clone https://github.com/yourusername/techform.gitcd techform
-1.
 Install dependencies
-Bash
-
-
-
-Run
+git clone https://github.com/yourusername/techform.gitcd techform
 npm install
+
 1.
 Set up environment variables
-Bash
+cp .env.example .env
+# Edit .env with your configuration
 
-
-
-Run
-cp .env.example .env# Edit .env with your configuration
 1.
 Set up the database
-Bash
-
-
-
-Run
 npm run db:setup
+
 1.
 Start the development server
-Bash
-
-
-
-Run
 npm run dev
+
 1.
 Visit http://localhost:3000 in your browser
+
 🚀 Usage
 Available Scripts
 npm start - Start the production server
