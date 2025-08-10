@@ -34,7 +34,8 @@ Frontend
 Vanilla HTML/CSS/JS: No framework overhead, direct control over styling
 ES6 Classes: Modular component system with event-driven architecture
 Custom CSS: Cyberpunk-themed design system with responsive layouts
-📦 Installation
+
+# Installation
 Prerequisites
 Node.js (v16.0.0 or higher)
 npm (comes with Node.js)
