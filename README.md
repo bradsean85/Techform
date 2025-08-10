@@ -51,7 +51,7 @@ npm install
 1.
 Set up environment variables
 cp .env.example .env
-# Edit .env with your configuration
+Edit .env with your configuration
 
 1.
 Set up the database
